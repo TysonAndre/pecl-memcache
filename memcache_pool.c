@@ -40,7 +40,7 @@
 
 ZEND_DECLARE_MODULE_GLOBALS(memcache)
 
-inline void mmc_buffer_alloc(mmc_buffer_t *buffer, unsigned int size)  /*
+void mmc_buffer_alloc(mmc_buffer_t *buffer, unsigned int size)  /*
 	ensures space for an additional size bytes {{{ */
 {
 	register size_t newlen;
@@ -48,7 +48,7 @@ inline void mmc_buffer_alloc(mmc_buffer_t *buffer, unsigned int size)  /*
 }
 /* }}} */
 
-inline void mmc_buffer_free(mmc_buffer_t *buffer)  /* {{{ */
+void mmc_buffer_free(mmc_buffer_t *buffer)  /* {{{ */
 {
 	if (buffer->value.c != NULL) {
 		smart_str_free(&(buffer->value));
@@ -177,7 +177,7 @@ void mmc_request_free(mmc_request_t *request)  /* {{{ */
 }
 /* }}} */
 
-static inline int mmc_request_send(mmc_t *mmc, mmc_request_t *request TSRMLS_DC) /* {{{ */
+static int mmc_request_send(mmc_t *mmc, mmc_request_t *request TSRMLS_DC) /* {{{ */
 {
 	int count, bytes;
 
@@ -784,7 +784,7 @@ static int mmc_server_connect(mmc_pool_t *pool, mmc_t *mmc, mmc_stream_t *io, in
 		io->read = mmc_stream_read_wrapper;
 		io->readline = mmc_stream_readline_wrapper;
 	}
-	
+
 #ifdef SO_NOSIGPIPE
 	/* Mac OS X doesn't have MSG_NOSIGNAL */
 	{
@@ -1061,7 +1061,7 @@ static int mmc_pool_response_handler_null(mmc_t *mmc, mmc_request_t *request, in
 }
 /* }}}*/
 
-static inline mmc_request_t *mmc_pool_request_alloc(mmc_pool_t *pool, int protocol,
+static mmc_request_t *mmc_pool_request_alloc(mmc_pool_t *pool, int protocol,
 	mmc_request_failover_handler failover_handler, void *failover_handler_param TSRMLS_DC) /* {{{ */
 {
 	mmc_request_t *request = mmc_queue_pop(&(pool->free_requests));
@@ -1314,7 +1314,7 @@ int mmc_pool_schedule_get(
 }
 /* }}} */
 
-static inline void mmc_pool_switch(mmc_pool_t *pool) {
+static void mmc_pool_switch(mmc_pool_t *pool) {
 	/* switch sending and reading queues */
 	if (pool->sending == &(pool->_sending1)) {
 		pool->sending = &(pool->_sending2);
@@ -1441,7 +1441,7 @@ void mmc_pool_select(mmc_pool_t *pool TSRMLS_DC) /*
 		if (result <= 0) {
 			for (i=0; i < sending->len; i++) {
 				mmc = (mmc_t *)mmc_queue_item(sending, i);
-				
+
 				/* remove sending request */
 				if (!FD_ISSET(mmc->sendreq->io->fd, &(pool->wfds))) {
 					mmc_queue_remove(sending, mmc);
@@ -1457,7 +1457,7 @@ void mmc_pool_select(mmc_pool_t *pool TSRMLS_DC) /*
 
 			for (i=0; i < reading->len; i++) {
 				mmc = (mmc_t *)mmc_queue_item(reading, i);
-				
+
 				/* remove reading request */
 				if (!FD_ISSET(mmc->readreq->io->fd, &(pool->rfds))) {
 					mmc_queue_remove(sending, mmc);
@@ -1676,7 +1676,7 @@ void mmc_pool_run(mmc_pool_t *pool TSRMLS_DC)  /*
 }
 /* }}} */
 
-inline int mmc_prepare_key_ex(const char *key, unsigned int key_len, char *result, unsigned int *result_len)  /* {{{ */
+int mmc_prepare_key_ex(const char *key, unsigned int key_len, char *result, unsigned int *result_len)  /* {{{ */
 {
 	unsigned int i;
 	if (key_len == 0) {
@@ -1694,7 +1694,7 @@ inline int mmc_prepare_key_ex(const char *key, unsigned int key_len, char *resul
 }
 /* }}} */
 
-inline int mmc_prepare_key(zval *key, char *result, unsigned int *result_len)  /* {{{ */
+int mmc_prepare_key(zval *key, char *result, unsigned int *result_len)  /* {{{ */
 {
 	if (Z_TYPE_P(key) == IS_STRING) {
 		return mmc_prepare_key_ex(Z_STRVAL_P(key), Z_STRLEN_P(key), result, result_len);
