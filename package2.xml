@@ -7,8 +7,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <channel>pecl.php.net</channel>
   <summary>memcached extension</summary>
   <description>
-    Memcached is a caching daemon designed especially for 
-    dynamic web applications to decrease database load by 
+    Memcached is a caching daemon designed especially for
+    dynamic web applications to decrease database load by
     storing objects in memory.
     This extension allows you to work with memcached through
     handy OO and procedural interfaces.
@@ -37,10 +37,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
     <email>hradtke@php.net</email>
     <active>yes</active>
   </lead>
-  <date>2013-04-07</date>
+  <date>2020-02-07</date>
   <version>
-    <release>3.0.8</release>
-    <api>3.0.8</api>
+    <release>3.0.9</release>
+    <api>3.0.9</api>
   </version>
   <stability>
     <release>beta</release>
@@ -48,10 +48,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
   </stability>
   <license uri="http://www.php.net/license">PHP License</license>
   <notes>
-   - Fix Bug #63142 - memcache client Segmentation fault
-   - Fix Bug #63272 - Explicitly reserve range of flags in php_memcache.h so application code can use
-   - Fix Bug #59602 - getExtendedStats fails on the host intermittently after restarting memcache
-   - Fix Bug #63141 - Added LICENSE file and include tests folder in package
+   - Backport fix for building this extension with gcc5+ to the 3.x release line.
+   - Backport extra helper files for running tests.
   </notes>
   <contents>
     <dir name="/">
@@ -75,6 +73,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <file name="memcache_queue.h" role="src" />
       <file name="README" role="doc" />
       <file name="memcache.php" role="doc" />
+      <file name ="tests/connect.inc" role="test" />
+      <file name ="tests/memcache.sh" role="test" />
       <file name ="tests/001.phpt" role="test" />
       <file name ="tests/002.phpt" role="test" />
       <file name ="tests/003.phpt" role="test" />
@@ -182,6 +182,24 @@ http://pear.php.net/dtd/package-2.0.xsd">
       </notes>
     </release>
     <release>
+      <date>2013-04-07</date>
+      <version>
+        <release>3.0.8</release>
+        <api>3.0.8</api>
+      </version>
+      <stability>
+        <release>beta</release>
+        <api>beta</api>
+      </stability>
+      <license uri="http://www.php.net/license">PHP License</license>
+      <notes>
+       - Fix Bug #63142 - memcache client Segmentation fault
+       - Fix Bug #63272 - Explicitly reserve range of flags in php_memcache.h so application code can use
+       - Fix Bug #59602 - getExtendedStats fails on the host intermittently after restarting memcache
+       - Fix Bug #63141 - Added LICENSE file and include tests folder in package
+      </notes>
+    </release>
+    <release>
       <date>2012-09-22</date>
       <version>
         <release>3.0.7</release>
@@ -250,7 +268,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <license uri="http://www.php.net/license">PHP License</license>
       <notes>
         - Improved performance of consistent hash strategy
-        - Accept timeout parameter as float to enable microsecond timeouts, param is still 
+        - Accept timeout parameter as float to enable microsecond timeouts, param is still
           given in seconds but with a microsecond fraction.
         - Added session locking to avoid concurrency problems with AJAX apps
         - Fixed PECL bug #14642 (3.0.x breaks BC with 2.2.x)
@@ -274,7 +292,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <notes>
         - Enabled compression by default for values larger than 20kb
         - Scalar data types (int, bool, double) are preserved by get/set
-        - Reserved the lowest 2 bytes of the flags for internal use 
+        - Reserved the lowest 2 bytes of the flags for internal use
         - Fixed PECL bug #14157 (Segmentation fault with errorcallback handler)
         - Fixed PECL bug #15342 (memcache keys whitespaces replace issue)
         - Fixed PECL bug #15447 (Persistent Connections Cause Segfaults if One Server Drops)
@@ -313,7 +331,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
         - Fixed PECL request #13725 (unnecessary allocations in mmc_consistent_add_server)
         - Changed behaviour when unserialize/uncompress fail to return false instead of failing the server
       </notes>
-    </release>    
+    </release>
     <release>
       <date>2008-02-05</date>
       <version>
@@ -347,9 +365,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <license uri="http://www.php.net/license">PHP License</license>
       <notes>
         See README for details on new API and INI directives.
-    
+
         - UDP support
-        - Binary protocol support 
+        - Binary protocol support
         - Non-blocking IO using select()
         - Pipelined multi-set/delete/increment/decrement
         - CAS (Compare-And-Swap) support
@@ -361,7 +379,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
            memcache.protocol = {ascii, binary}
            memcache.redundancy = 1
            memcache.session_redundancy = 2
-        - Changed INI defaults 
+        - Changed INI defaults
            memcache.hash_strategy = consistent
            memcache.chunk_size = 32768
       </notes>
@@ -432,7 +450,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <license uri="http://www.php.net/license">PHP License</license>
       <notes>
         - Added support for consistent hash strategy
-        - New INI directives 
+        - New INI directives
             "memcache.hash_strategy" = {standard, consistent}
             "memcache.hash_function" = {crc32, fnv}
         - PHP6 support
@@ -491,7 +509,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
         - New methods: setServerParams(), getServerStatus()
         - Statistics methods support fetching other kinds of stats (slabs, items, cachedump, ...)
         - Fixed PECL bugs #7631, #8117 (erroneous line feeds in config.m4)
-        - Added memcache.max_failover_attempts ini directive, which can be used to configure max number of 
+        - Added memcache.max_failover_attempts ini directive, which can be used to configure max number of
             servers to try when setting and getting data.
       </notes>
     </release>
@@ -624,7 +642,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <date>2004-12-02</date>
       <license uri="http://www.php.net/license">PHP License</license>
       <notes>
-        1) Added multi get support (i.e. you&apos;re now able to get multiple items with one get() call, 
+        1) Added multi get support (i.e. you&apos;re now able to get multiple items with one get() call,
         just pass array of keys to get() and it will return associative array of found items).
       </notes>
     </release>
@@ -691,7 +709,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
       <license uri="http://www.php.net/license">PHP License</license>
       <notes>
         1) Ifdef&apos;ed debug routines, so they are available only in debug mode.
-        This should add more speed to extension. 
+        This should add more speed to extension.
         2) Minor code decorations.
       </notes>
     </release>
